@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1 class="cim">Leaderboard</h1>
+    <div class="leaderboard-container" style="text-align: center; margin-top: 50px;">
+        <ul id="leaderboard" class="leaderboard"></ul>
+    </div>
+    <button onclick="resetLeaderboard()">Reset Leaderboard</button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadLeaderboard();
+        });
+
+        function loadLeaderboard() {
+            const storedLeaderboard = localStorage.getItem('leaderboard');
+            if (storedLeaderboard) {
+                const leaderboard = JSON.parse(storedLeaderboard);
+                displayLeaderboard(leaderboard);
+            }
+        }
+
+        function displayLeaderboard(leaderboard) {
+            const leaderboardElement = document.getElementById('leaderboard');
+            leaderboardElement.innerHTML = '';
+            leaderboard.forEach(entry => {
+                const li = document.createElement('li');
+                li.textContent = `${entry.username}: ${entry.score}`;
+                leaderboardElement.appendChild(li);
+            });
+        }
+
+        function resetLeaderboard() {
+            localStorage.removeItem('leaderboard');
+            alert('Leaderboard has been reset to 0.');
+            loadLeaderboard(); // Refresh the leaderboard display
+        }
+    </script>
+</body>
+</html>

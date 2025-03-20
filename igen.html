@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Airsoft</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1 class="cim" id="teamName">Hülye fasz</h1>
+    <div class="score-container">
+        <p id="score" class="score">Pontszám: 0</p>
+    </div>
+
+    <div class="container" style="text-align: center; margin-top: 50px;">
+        <h2>Sorsolj ki egy feladatot a csapatodnak:</h2>
+        <button id="sorsolasButton" onclick="showRandomObjective()">Sorsolás</button>
+        <p id="objective" class="objective"></p>
+        <button id="sikeresButton" style="display:none;" onclick="incrementScore()">Sikeres feladat</button>
+        <button id="sikertelenButton" style="display:none;" onclick="reset()">Sikertelen feladat</button>
+        <button onclick="redirectToLeaderboard()">Leaderboard</button>
+    </div>
+
+    <script>
+        let score = 0;
+        let username = '';
+
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            username = getQueryParam('username');
+            if (username) {
+                document.getElementById('teamName').textContent = username;
+                loadScore();
+            }
+        });
+
+        function loadScore() {
+            const storedLeaderboard = localStorage.getItem('leaderboard');
+            if (storedLeaderboard) {
+                const leaderboard = JSON.parse(storedLeaderboard);
+                const team = leaderboard.find(entry => entry.username === username);
+                if (team) {
+                    score = team.score;
+                    document.getElementById('score').textContent = `Pontszám: ${score}`;
+                }
+            }
+        }
+
+        function showRandomObjective() {
+            const objectives = [
+                '1. Feladat: Foglald el az épületet, és védjétek 40 percig!',
+                '2. Feladat: Szállítások el a túszt a kijelölt helyre!',
+                '3. Feladat: Szerezzétek meg az erővágót, és nyissátok a rekeszeket!',
+                '4. Feladat: Keressétek meg a ellenség vezetőjét, és hallgattástok ki!',
+                '5. Feladat: Szerezzétek meg az UAZ-ról a ellátmányokat!'
+            ];
+            const randomIndex = Math.floor(Math.random() * objectives.length);
+            const randomObjective = objectives[randomIndex];
+            document.getElementById('objective').textContent = randomObjective;
+            document.getElementById('sorsolasButton').style.display = 'none';
+            document.getElementById('sikeresButton').style.display = 'inline-block';
+            document.getElementById('sikertelenButton').style.display = 'inline-block';
+        }
+
+        function incrementScore() {
+            score++;
+            document.getElementById('score').textContent = `Pontszám: ${score}`;
+            updateLeaderboard();
+            reset();
+        }
+
+        function updateLeaderboard() {
+            let leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
+            const teamIndex = leaderboard.findIndex(entry => entry.username === username);
+            if (teamIndex !== -1) {
+                leaderboard[teamIndex].score = score;
+            } else {
+                leaderboard.push({ username, score });
+            }
+            localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
+        }
+
+        function reset() {
+            document.getElementById('objective').textContent = '';
+            document.getElementById('sorsolasButton').style.display = 'inline-block';
+            document.getElementById('sikeresButton').style.display = 'none';
+            document.getElementById('sikertelenButton').style.display = 'none';
+        }
+
+        function redirectToLeaderboard() {
+            window.location.href = 'leaderboard.html';
+        }
+    </script>
+</body>
+</html>

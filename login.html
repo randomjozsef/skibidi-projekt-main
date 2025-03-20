@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airsoftjatek feladat sor</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+   <h1 class="cim">
+    Airsoftjatek feladat sor
+    </h1>
+
+    <div class="container" style="text-align: center; margin-top: 50px;">
+        <h2 style="padding-right: 10px;">Írja be a csapata nevét: </h2><br>
+        <input type="text" id="username" placeholder="Csapatnév">
+        <button onclick="redirectToIgen()">Tovább</button>
+        <button onclick="redirectToLeaderboard()">Leaderboard</button>
+    </div>
+
+    <script>
+        function redirectToIgen() {
+            const username = document.getElementById('username').value;
+            if (username.trim() === '') {
+                alert('Kérjük, adja meg a csapat nevét!');
+                return;
+            }
+            window.location.href = `igen.html?username=${encodeURIComponent(username)}`;
+        }
+        function redirectToLeaderboard() {
+            window.location.href = 'leaderboard.html';
+        }
+    </script>
+</body>
+</html>
