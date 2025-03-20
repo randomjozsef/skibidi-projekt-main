@@ -5,11 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leaderboard</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        table.leaderboard {
+            width: 50%;
+            border: 1px solid #ddd;
+            border-collapse: collapse;
+        }
+        table.leaderboard th, table.leaderboard td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        table.leaderboard th {
+            background-color: #f2f2f2;
+        }
+        table.leaderboard td {
+            background-color: #e6f7ff;
+        }
+        table.leaderboard tr:nth-child(even) td {
+            background-color: #ccf2ff;
+        }
+        table.leaderboard tr:hover td {
+            background-color: #b3e6ff;
+        }
+    </style>
 </head>
 <body>
     <h1 class="cim">Leaderboard</h1>
     <div class="leaderboard-container" style="text-align: center; margin-top: 50px;">
-        <ul id="leaderboard" class="leaderboard"></ul>
+        <table id="leaderboard" class="leaderboard" style="margin: 0 auto; border-collapse: collapse;">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Score</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
     </div>
     <button onclick="resetLeaderboard()">Reset Leaderboard</button>
 
@@ -27,12 +59,17 @@
         }
 
         function displayLeaderboard(leaderboard) {
-            const leaderboardElement = document.getElementById('leaderboard');
+            const leaderboardElement = document.getElementById('leaderboard').getElementsByTagName('tbody')[0];
             leaderboardElement.innerHTML = '';
             leaderboard.forEach(entry => {
-                const li = document.createElement('li');
-                li.textContent = `${entry.username}: ${entry.score}`;
-                leaderboardElement.appendChild(li);
+                const tr = document.createElement('tr');
+                const tdUsername = document.createElement('td');
+                const tdScore = document.createElement('td');
+                tdUsername.textContent = entry.username;
+                tdScore.textContent = entry.score;
+                tr.appendChild(tdUsername);
+                tr.appendChild(tdScore);
+                leaderboardElement.appendChild(tr);
             });
         }
 
