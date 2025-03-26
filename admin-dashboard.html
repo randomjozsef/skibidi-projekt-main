@@ -4,23 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: url('camo2.png') no-repeat center center fixed;
+            background-size: cover;
+        }
+        h1, .card-header {
+            color: #ffffff; /* White text for better contrast */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8); /* Add shadow for visibility */
+        }
+    </style>
 </head>
-<body>
-    <h1 class="cim">Admin Dashboard</h1>
-    <div class="container" style="text-align: center; margin-top: 50px;">
-        <button onclick="redirectToAdminCreator()">Create Admin Account</button>
-        <button onclick="redirectToLeaderboard()">Leaderboard</button>
-        <button onclick="logout()">Logout</button>
+<body class="container py-5">
+    <h1 class="text-center mb-4">Admin Dashboard</h1>
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">Admin List</div>
+                <div class="card-body">
+                    <table class="table table-bordered table-striped" id="adminTable">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8 d-flex flex-column align-items-center gap-3">
+            <button onclick="redirectToAdminCreator()" class="btn btn-primary w-50">Create Admin Account</button>
+            <button onclick="redirectToLeaderboard()" class="btn btn-secondary w-50">Leaderboard</button>
+            <button onclick="logout()" class="btn btn-danger w-50">Logout</button>
+        </div>
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAdminList();
+        });
+
+        function loadAdminList() {
+            const adminTableBody = document.getElementById('adminTable').getElementsByTagName('tbody')[0];
+            adminTableBody.innerHTML = ''; // Clear existing rows
+            const admins = JSON.parse(localStorage.getItem('admins')) || [];
+            admins.forEach(admin => {
+                const tr = document.createElement('tr');
+                const tdUsername = document.createElement('td');
+                tdUsername.textContent = admin.username;
+                tr.appendChild(tdUsername);
+                adminTableBody.appendChild(tr);
+            });
+        }
+
         function redirectToAdminCreator() {
             window.location.href = 'admin-account-creator.html';
         }
+
         function redirectToLeaderboard() {
-            window.location.href = 'leaderboard.html';
+            window.location.href = 'leaderboard.html?admin=true';
         }
+
         function logout() {
             alert('You have been logged out.');
             window.location.href = 'login.html';
