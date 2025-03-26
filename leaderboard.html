@@ -39,16 +39,28 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
+            const hasTeamName = urlParams.get('hasTeamName') === 'true';
             const isAdmin = urlParams.get('admin') === 'true';
+
             const resetButton = document.getElementById('resetButton');
             const backButton = document.getElementById('backButton');
 
+            // Configure reset button visibility
             resetButton.style.display = isAdmin ? 'inline-block' : 'none';
-            backButton.textContent = isAdmin ? 'Back to Dashboard' : 'Vissza a feladatokhoz';
-            backButton.onclick = () => {
-                window.location.href = isAdmin ? 'admin-dashboard.html?admin=true' : 'igen.html';
-            };
 
+            // Configure back button behavior
+            if (isAdmin) {
+                backButton.textContent = 'Back to Dashboard';
+                backButton.onclick = () => window.location.href = 'admin-dashboard.html?admin=true';
+            } else if (hasTeamName) {
+                backButton.textContent = 'Vissza a feladatokhoz';
+                backButton.onclick = () => window.location.href = 'igen.html';
+            } else {
+                backButton.textContent = 'Vissza a bejelentkezéshez';
+                backButton.onclick = () => window.location.href = 'login.html';
+            }
+
+            // Load and display leaderboard
             loadLeaderboard();
         });
 
@@ -89,10 +101,6 @@
                 alert('Leaderboard has been reset.');
                 loadLeaderboard(); // Refresh the leaderboard display
             }
-        }
-
-        function goBackToDashboard() {
-            window.location.href = 'admin-dashboard.html?admin=true';
         }
     </script>
 </body>

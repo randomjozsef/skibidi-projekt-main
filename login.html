@@ -42,7 +42,9 @@
             window.location.href = `igen.html?username=${encodeURIComponent(username)}`;
         }
         function redirectToLeaderboard() {
-            window.location.href = 'leaderboard.html';
+            const username = document.getElementById('username').value;
+            const hasTeamName = username.trim() !== '';
+            window.location.href = `leaderboard.html?hasTeamName=${hasTeamName}`;
         }
         function adminLogin() {
             const adminUsername = prompt('Admin Username:');
