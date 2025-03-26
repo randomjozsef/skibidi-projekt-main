@@ -27,6 +27,7 @@
                         <thead>
                             <tr>
                                 <th>Username</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -43,20 +44,41 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            loadAdminList();
+            loadAdminAccounts();
         });
 
-        function loadAdminList() {
+        function loadAdminAccounts() {
+            const storedAdmins = JSON.parse(localStorage.getItem('admins')) || [];
             const adminTableBody = document.getElementById('adminTable').getElementsByTagName('tbody')[0];
-            adminTableBody.innerHTML = ''; // Clear existing rows
-            const admins = JSON.parse(localStorage.getItem('admins')) || [];
-            admins.forEach(admin => {
+            adminTableBody.innerHTML = '';
+
+            storedAdmins.forEach((admin, index) => {
                 const tr = document.createElement('tr');
                 const tdUsername = document.createElement('td');
+                const tdActions = document.createElement('td');
+                const deleteButton = document.createElement('button');
+
                 tdUsername.textContent = admin.username;
+                deleteButton.textContent = 'Delete';
+                deleteButton.className = 'btn btn-danger btn-sm';
+                deleteButton.onclick = () => deleteAdmin(index);
+
+                tdActions.appendChild(deleteButton);
                 tr.appendChild(tdUsername);
+                tr.appendChild(tdActions);
                 adminTableBody.appendChild(tr);
             });
+        }
+
+        function deleteAdmin(index) {
+            const storedAdmins = JSON.parse(localStorage.getItem('admins')) || [];
+            const confirmDelete = confirm(`Are you sure you want to delete the admin account "${storedAdmins[index].username}"?`);
+            if (confirmDelete) {
+                storedAdmins.splice(index, 1);
+                localStorage.setItem('admins', JSON.stringify(storedAdmins));
+                alert('Admin account deleted successfully.');
+                loadAdminAccounts(); // Refresh the admin list
+            }
         }
 
         function redirectToAdminCreator() {

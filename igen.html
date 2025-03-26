@@ -32,6 +32,9 @@
                 <button onclick="redirectToLeaderboard()" class="btn btn-secondary">Leaderboard</button>
                 <button onclick="logout()" class="btn btn-danger">Logout</button>
             </div>
+            <div>
+                <p id="progressDisplay"></p>
+            </div>
         </div>
     </div>
 
@@ -45,14 +48,20 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            username = getQueryParam('username');
-            if (username) {
-                document.getElementById('teamName').textContent = username;
-                loadScore();
+            const urlParams = new URLSearchParams(window.location.search);
+            const username = decodeURIComponent(urlParams.get('username') || '').trim();
+
+            if (!username) {
+                alert('No valid team name provided!');
+                window.location.href = 'login.html';
+                return;
             }
+
+            document.getElementById('teamName').textContent = username;
+            loadScore(username);
         });
 
-        function loadScore() {
+        function loadScore(username) {
             const storedLeaderboard = localStorage.getItem('leaderboard');
             if (storedLeaderboard) {
                 const leaderboard = JSON.parse(storedLeaderboard);
@@ -88,6 +97,7 @@
         }
 
         function updateLeaderboard() {
+            const username = document.getElementById('teamName').textContent;
             let leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
             const teamIndex = leaderboard.findIndex(entry => entry.username === username);
             if (teamIndex !== -1) {

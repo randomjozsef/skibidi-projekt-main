@@ -34,11 +34,12 @@
 
     <script>
         function redirectToIgen() {
-            const username = document.getElementById('username').value;
-            if (username.trim() === '') {
+            const username = document.getElementById('username').value.trim();
+            if (username === '') {
                 alert('Kérjük, adja meg a csapat nevét!');
                 return;
             }
+
             window.location.href = `igen.html?username=${encodeURIComponent(username)}`;
         }
         function redirectToLeaderboard() {
