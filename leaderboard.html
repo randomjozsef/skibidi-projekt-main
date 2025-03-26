@@ -47,6 +47,11 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const isAdmin = urlParams.get('admin') === 'true';
+            if (!isAdmin) {
+                document.querySelector('button[onclick="resetLeaderboard()"]').style.display = 'none';
+            }
             loadLeaderboard();
         });
 
@@ -74,9 +79,12 @@
         }
 
         function resetLeaderboard() {
-            localStorage.removeItem('leaderboard');
-            alert('Leaderboard has been reset to 0.');
-            loadLeaderboard(); // Refresh the leaderboard display
+            const confirmReset = confirm('Are you sure you want to reset the leaderboard?');
+            if (confirmReset) {
+                localStorage.removeItem('leaderboard');
+                alert('Leaderboard has been reset to 0.');
+                loadLeaderboard(); // Refresh the leaderboard display
+            }
         }
     </script>
 </body>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1 class="cim">Admin Dashboard</h1>
+    <div class="container" style="text-align: center; margin-top: 50px;">
+        <button onclick="redirectToAdminCreator()">Create Admin Account</button>
+        <button onclick="redirectToLeaderboard()">Leaderboard</button>
+        <button onclick="logout()">Logout</button>
+    </div>
+
+    <script>
+        function redirectToAdminCreator() {
+            window.location.href = 'admin-account-creator.html';
+        }
+        function redirectToLeaderboard() {
+            window.location.href = 'leaderboard.html';
+        }
+        function logout() {
+            alert('You have been logged out.');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>
