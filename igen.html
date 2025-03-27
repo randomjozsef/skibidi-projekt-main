@@ -116,7 +116,8 @@
         }
 
         function redirectToLeaderboard() {
-            window.location.href = 'leaderboard.html';
+            const username = document.getElementById('teamName').textContent;
+            window.location.href = `leaderboard.html?hasTeamName=true&username=${encodeURIComponent(username)}`;
         }
 
         function logout() {

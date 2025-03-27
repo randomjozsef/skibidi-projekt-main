@@ -43,9 +43,10 @@
             window.location.href = `igen.html?username=${encodeURIComponent(username)}`;
         }
         function redirectToLeaderboard() {
-            const username = document.getElementById('username').value;
-            const hasTeamName = username.trim() !== '';
-            window.location.href = `leaderboard.html?hasTeamName=${hasTeamName}`;
+            const username = document.getElementById('username').value.trim();
+            const hasTeamName = username !== '';
+            const query = hasTeamName ? `?hasTeamName=${hasTeamName}&username=${encodeURIComponent(username)}` : '';
+            window.location.href = `leaderboard.html${query}`;
         }
         function adminLogin() {
             const adminUsername = prompt('Admin Username:');

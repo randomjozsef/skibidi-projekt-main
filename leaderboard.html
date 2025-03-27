@@ -40,6 +40,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const hasTeamName = urlParams.get('hasTeamName') === 'true';
+            const username = urlParams.get('username');
             const isAdmin = urlParams.get('admin') === 'true';
 
             const resetButton = document.getElementById('resetButton');
@@ -52,9 +53,9 @@
             if (isAdmin) {
                 backButton.textContent = 'Back to Dashboard';
                 backButton.onclick = () => window.location.href = 'admin-dashboard.html?admin=true';
-            } else if (hasTeamName) {
+            } else if (hasTeamName && username) {
                 backButton.textContent = 'Vissza a feladatokhoz';
-                backButton.onclick = () => window.location.href = 'igen.html';
+                backButton.onclick = () => window.location.href = `igen.html?username=${encodeURIComponent(username)}`;
             } else {
                 backButton.textContent = 'Vissza a bejelentkezéshez';
                 backButton.onclick = () => window.location.href = 'login.html';
