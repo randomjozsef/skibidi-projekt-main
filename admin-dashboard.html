@@ -45,9 +45,44 @@
                     <button onclick="toggleMap()" id="toggleMapButton" class="btn btn-secondary">Térkép Bekapcsolása</button>
                 </div>
             </div>
+            <div class="card w-100">
+                <div class="card-header bg-primary text-white">Aktív Feladat Mappa</div>
+                <div class="card-body">
+                    <select id="activeFolderSelector" class="form-select mb-3">
+                        <!-- Options will be dynamically loaded -->
+                    </select>
+                    <button onclick="setActiveFolder()" class="btn btn-success w-100">Aktív Feladat Mappa Beállítása</button>
+                </div>
+            </div>
+            <button onclick="openObjectiveManager()" class="btn btn-primary w-50">Manage Objectives</button>
             <button onclick="redirectToAdminCreator()" class="btn btn-primary w-50">Create Admin Account</button>
             <button onclick="redirectToLeaderboard()" class="btn btn-secondary w-50">Leaderboard</button>
             <button onclick="logout()" class="btn btn-danger w-50">Logout</button>
+        </div>
+    </div>
+
+    <!-- Objective Manager Modal -->
+    <div class="modal" id="objectiveManagerModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Manage Objectives</h5>
+                    <button type="button" class="btn-close" onclick="closeObjectiveManager()"></button>
+                </div>
+                <div class="modal-body">
+                    <label for="folderName" class="form-label">Folder Name:</label>
+                    <input type="text" id="folderName" class="form-control mb-3" placeholder="Enter folder name">
+                    <label for="objectiveText" class="form-label">Objective:</label>
+                    <textarea id="objectiveText" class="form-control mb-3" placeholder="Enter objective"></textarea>
+                    <button onclick="addObjective()" class="btn btn-success w-100">Add Objective</button>
+                    <hr>
+                    <h6>Existing Folders:</h6>
+                    <ul id="folderList" class="list-group"></ul>
+                    <hr>
+                    <h6>Objectives in Selected Folder:</h6>
+                    <ul id="objectiveList" class="list-group"></ul>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -55,6 +90,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             loadAdminAccounts();
             loadMapSettings();
+            loadObjectiveFolders(); // Ensure this function is called on page load
         });
 
         function loadAdminAccounts() {
@@ -125,6 +161,150 @@
             localStorage.setItem('selectedMap', selectedMap);
             alert('Térkép kiválasztva: ' + selectedMap);
         });
+
+        function openObjectiveManager() {
+            document.getElementById('objectiveManagerModal').style.display = 'block';
+            loadObjectives();
+        }
+
+        function closeObjectiveManager() {
+            document.getElementById('objectiveManagerModal').style.display = 'none';
+        }
+
+        function addObjective() {
+            const folderName = document.getElementById('folderName').value.trim();
+            const objectiveText = document.getElementById('objectiveText').value.trim();
+
+            if (!folderName || !objectiveText) {
+                alert('Kérjük, adjon meg egy mappa nevet és egy feladatot!');
+                return;
+            }
+
+            const folderKey = `${folderName}_feladatok`;
+            const objectives = JSON.parse(localStorage.getItem(folderKey)) || [];
+            objectives.push(objectiveText); // Add only the objective text
+            localStorage.setItem(folderKey, JSON.stringify(objectives));
+
+            alert(`Feladat hozzáadva a(z) "${folderName}" mappához.`);
+            document.getElementById('objectiveText').value = '';
+            loadObjectiveFolders(); // Refresh the dropdown
+            loadObjectives(folderKey); // Refresh the objective list
+        }
+
+        function loadObjectives(folderKey) {
+            const objectiveList = document.getElementById('objectiveList');
+            objectiveList.innerHTML = ''; // Clear existing objectives
+
+            const objectives = JSON.parse(localStorage.getItem(folderKey)) || [];
+            if (objectives.length === 0) {
+                const noObjectivesItem = document.createElement('li');
+                noObjectivesItem.className = 'list-group-item';
+                noObjectivesItem.textContent = 'Nincsenek elérhető feladatok';
+                objectiveList.appendChild(noObjectivesItem);
+                return;
+            }
+
+            objectives.forEach((objective, index) => {
+                const li = document.createElement('li');
+                li.className = 'list-group-item d-flex justify-content-between align-items-center';
+                li.textContent = `${index + 1}. ${objective}`;
+
+                const deleteButton = document.createElement('button');
+                deleteButton.className = 'btn btn-danger btn-sm';
+                deleteButton.textContent = 'Delete';
+                deleteButton.onclick = () => deleteObjective(folderKey, index);
+
+                li.appendChild(deleteButton);
+                objectiveList.appendChild(li);
+            });
+        }
+
+        function deleteObjective(folderKey, index) {
+            const objectives = JSON.parse(localStorage.getItem(folderKey)) || [];
+            objectives.splice(index, 1);
+            localStorage.setItem(folderKey, JSON.stringify(objectives));
+            loadObjectives(folderKey); // Refresh the objective list
+        }
+
+        function loadObjectiveFolders() {
+            const activeFolderSelector = document.getElementById('activeFolderSelector');
+            activeFolderSelector.innerHTML = ''; // Clear existing options
+
+            // Load all folders from localStorage
+            const keys = Object.keys(localStorage).filter(key => key.endsWith('_feladatok'));
+            if (keys.length === 0) {
+                const noFoldersOption = document.createElement('option');
+                noFoldersOption.value = '';
+                noFoldersOption.textContent = 'Nincsenek elérhető mappák';
+                activeFolderSelector.appendChild(noFoldersOption);
+                return;
+            }
+
+            keys.forEach(folder => {
+                const option = document.createElement('option');
+                option.value = folder;
+                option.textContent = folder.replace('_feladatok', ''); // Display folder name without suffix
+                activeFolderSelector.appendChild(option);
+            });
+
+            // Set the currently active folder
+            const activeFolder = localStorage.getItem('activeFolder');
+            if (activeFolder) {
+                activeFolderSelector.value = activeFolder;
+            }
+
+            const folderList = document.getElementById('folderList');
+            folderList.innerHTML = ''; // Clear existing folders
+
+            if (keys.length === 0) {
+                const noFoldersItem = document.createElement('li');
+                noFoldersItem.className = 'list-group-item';
+                noFoldersItem.textContent = 'Nincsenek elérhető mappák';
+                folderList.appendChild(noFoldersItem);
+                return;
+            }
+
+            keys.forEach(folder => {
+                const li = document.createElement('li');
+                li.className = 'list-group-item d-flex justify-content-between align-items-center';
+                li.textContent = folder.replace('_feladatok', ''); // Display folder name without suffix
+
+                const viewButton = document.createElement('button');
+                viewButton.className = 'btn btn-primary btn-sm me-2';
+                viewButton.textContent = 'View';
+                viewButton.onclick = () => loadObjectives(folder);
+
+                const deleteButton = document.createElement('button');
+                deleteButton.className = 'btn btn-danger btn-sm';
+                deleteButton.textContent = 'Delete';
+                deleteButton.onclick = () => deleteFolder(folder);
+
+                li.appendChild(viewButton);
+                li.appendChild(deleteButton);
+                folderList.appendChild(li);
+            });
+        }
+
+        function deleteFolder(folderKey) {
+            const confirmDelete = confirm(`Biztosan törölni szeretné a(z) "${folderKey.replace('_feladatok', '')}" mappát?`);
+            if (confirmDelete) {
+                localStorage.removeItem(folderKey);
+                alert(`A(z) "${folderKey.replace('_feladatok', '')}" mappa törölve.`);
+                loadObjectiveFolders(); // Refresh the folder list
+                document.getElementById('objectiveList').innerHTML = ''; // Clear objectives list
+            }
+        }
+
+        function setActiveFolder() {
+            const activeFolder = document.getElementById('activeFolderSelector').value;
+            if (!activeFolder) {
+                alert('Nincs kiválasztott mappa!');
+                return;
+            }
+
+            localStorage.setItem('activeFolder', activeFolder);
+            alert(`Aktív feladat mappa beállítva: ${activeFolder.replace('_feladatok', '')}`);
+        }
     </script>
 </body>
 </html>

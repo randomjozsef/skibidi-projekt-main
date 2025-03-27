@@ -78,16 +78,24 @@
         }
 
         function showRandomObjective() {
-            const objectives = [
-                '1. Feladat: Foglald el az épületet, és védjétek 40 percig!',
-                '2. Feladat: Szállítások el a túszt a kijelölt helyre!',
-                '3. Feladat: Szerezzétek meg az erővágót, és nyissátok a rekeszeket!',
-                '4. Feladat: Keressétek meg a ellenség vezetőjét, és hallgattástok ki!',
-                '5. Feladat: Szerezzétek meg az UAZ-ról a ellátmányokat!'
-            ];
+            const activeFolder = localStorage.getItem('activeFolder');
+            if (!activeFolder) {
+                alert('Nincs aktív feladat mappa beállítva!');
+                return;
+            }
+
+            const objectives = JSON.parse(localStorage.getItem(activeFolder)) || [];
+            if (objectives.length === 0) {
+                alert('Nincsenek elérhető feladatok az aktív mappában.');
+                return;
+            }
+
+            // Select a random objective
             const randomIndex = Math.floor(Math.random() * objectives.length);
             const randomObjective = objectives[randomIndex];
-            document.getElementById('objective').textContent = randomObjective;
+
+            // Display the random objective
+            document.getElementById('objective').textContent = `${randomIndex + 1}. ${randomObjective}`;
             document.getElementById('sorsolasButton').style.display = 'none';
             document.getElementById('sikeresButton').style.display = 'inline-block';
             document.getElementById('sikertelenButton').style.display = 'inline-block';
