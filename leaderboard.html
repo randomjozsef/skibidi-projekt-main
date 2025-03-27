@@ -76,6 +76,10 @@
         function displayLeaderboard(leaderboard) {
             const leaderboardElement = document.getElementById('leaderboard').getElementsByTagName('tbody')[0];
             leaderboardElement.innerHTML = '';
+
+            // Sort leaderboard by score in descending order
+            leaderboard.sort((a, b) => b.score - a.score);
+
             leaderboard.forEach(entry => {
                 const tr = document.createElement('tr');
                 const tdUsername = document.createElement('td');
