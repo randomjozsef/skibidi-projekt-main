@@ -36,6 +36,15 @@
             </div>
         </div>
         <div class="col-md-8 d-flex flex-column align-items-center gap-3">
+            <div class="card w-100">
+                <div class="card-header bg-primary text-white">Térkép Kiválasztása</div>
+                <div class="card-body">
+                    <select id="mapSelector" class="form-select mb-3">
+                        <option value="pszi.jpg">Pestszentimre Térkép</option>
+                    </select>
+                    <button onclick="toggleMap()" id="toggleMapButton" class="btn btn-secondary">Térkép Bekapcsolása</button>
+                </div>
+            </div>
             <button onclick="redirectToAdminCreator()" class="btn btn-primary w-50">Create Admin Account</button>
             <button onclick="redirectToLeaderboard()" class="btn btn-secondary w-50">Leaderboard</button>
             <button onclick="logout()" class="btn btn-danger w-50">Logout</button>
@@ -45,6 +54,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             loadAdminAccounts();
+            loadMapSettings();
         });
 
         function loadAdminAccounts() {
@@ -93,6 +103,28 @@
             alert('You have been logged out.');
             window.location.href = 'login.html';
         }
+
+        function loadMapSettings() {
+            const selectedMap = localStorage.getItem('selectedMap') || 'pszi.jpg';
+            const isMapEnabled = localStorage.getItem('isMapEnabled') === 'true';
+
+            document.getElementById('mapSelector').value = selectedMap;
+            document.getElementById('toggleMapButton').textContent = isMapEnabled ? 'Térkép Kikapcsolása' : 'Térkép Bekapcsolása';
+        }
+
+        function toggleMap() {
+            const isMapEnabled = localStorage.getItem('isMapEnabled') === 'true';
+            const newStatus = !isMapEnabled;
+            localStorage.setItem('isMapEnabled', newStatus);
+            document.getElementById('toggleMapButton').textContent = newStatus ? 'Térkép Kikapcsolása' : 'Térkép Bekapcsolása';
+            alert(`Térkép ${newStatus ? 'bekapcsolva' : 'kikapcsolva'}.`);
+        }
+
+        document.getElementById('mapSelector').addEventListener('change', (event) => {
+            const selectedMap = event.target.value;
+            localStorage.setItem('selectedMap', selectedMap);
+            alert('Térkép kiválasztva: ' + selectedMap);
+        });
     </script>
 </body>
 </html>

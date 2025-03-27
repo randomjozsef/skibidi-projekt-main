@@ -32,6 +32,9 @@
                 <button onclick="redirectToLeaderboard()" class="btn btn-secondary">Leaderboard</button>
                 <button onclick="logout()" class="btn btn-danger">Logout</button>
             </div>
+            <div id="mapContainer" class="text-center mt-4" style="display: none;">
+                <img id="mapImage" src="" alt="Térkép" class="img-fluid" style="max-width: 50%; height: auto;">
+            </div>
             <div>
                 <p id="progressDisplay"></p>
             </div>
@@ -59,6 +62,7 @@
 
             document.getElementById('teamName').textContent = username;
             loadScore(username);
+            loadMap();
         });
 
         function loadScore(username) {
@@ -123,6 +127,18 @@
         function logout() {
             alert('You have been logged out.');
             window.location.href = 'login.html';
+        }
+
+        function loadMap() {
+            const isMapEnabled = localStorage.getItem('isMapEnabled') === 'true';
+            const selectedMap = localStorage.getItem('selectedMap') || 'pszi.jpg';
+
+            if (isMapEnabled) {
+                document.getElementById('mapContainer').style.display = 'block';
+                document.getElementById('mapImage').src = selectedMap;
+            } else {
+                document.getElementById('mapContainer').style.display = 'none';
+            }
         }
     </script>
 </body>
